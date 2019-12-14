@@ -37,7 +37,7 @@ int main(void) {
       printf("INVALID\n");
       return 0;
   }
-  if ((firstTwo == 51 || firstTwo == 52 || firstTwo == 53 || firstTwo == 54 || firstTwo == 55) && (len == 16)) {
+  if (firstTwo >=51 && firstTwo <= 55 && len == 16) {
     printf("MASTERCARD\n");
   }
   else if ((firstTwo == 34 || firstTwo == 37) && (len == 15)) {
