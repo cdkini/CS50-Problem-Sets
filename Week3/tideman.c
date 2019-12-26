@@ -120,15 +120,18 @@ void record_preferences(int ranks[]) {
 
 // Record pairs of candidates where one is preferred over the other
 void add_pairs(void) {
+    int arr_i = 0;
     for (int i = 0; i < candidate_count - 1; i++) {
         for (int j = i + 1; j < candidate_count; j++) {
             if (preferences[i][j] > preferences[j][i]) {
                 pair p = { .winner = i, .loser = j };
-                pairs[i] = p;
+                pairs[arr_i] = p;
+                arr_i++;
             }
             else if (preferences[i][j] < preferences[j][i]) {
                 pair p = { .winner = j, .loser = i };
-                pairs[i] = p;
+                pairs[arr_i] = p;
+                arr_i++;
             }
             else {
                 continue;
@@ -140,10 +143,16 @@ void add_pairs(void) {
 }
 
 // Sort pairs in decreasing order by strength of victory
-void sort_pairs(void)
-{
-    // TODO
-    return;
+void sort_pairs(void) {
+    for (int i = 1; i < pair_count; i++) {
+        for(int j = 0; j < pair_count-i; j++) {
+            if (pairs[j].loser > pairs[j+1].loser) {
+                pair temp = pairs[j];
+                pairs[j] = pairs[j+1];
+                pairs[j+1] = temp;
+            }
+        }
+    }
 }
 
 // Lock pairs into the candidate graph in order, without creating cycles
