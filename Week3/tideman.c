@@ -144,28 +144,45 @@ void add_pairs(void) {
 
 // Sort pairs in decreasing order by strength of victory
 void sort_pairs(void) {
+    pair temp;
     for (int i = 1; i < pair_count; i++) {
-        for(int j = 0; j < pair_count-i; j++) {
-            if (pairs[j].loser > pairs[j+1].loser) {
-                pair temp = pairs[j];
-                pairs[j] = pairs[j+1];
-                pairs[j+1] = temp;
+        for (int j = 0; j < pair_count - i; j++) {
+            if (pairs[j].loser < pairs[j + 1].loser) {
+                temp = pairs[j];
+                pairs[j] = pairs[j + 1];
+                pairs[j + 1] = temp;
             }
         }
     }
 }
 
 // Lock pairs into the candidate graph in order, without creating cycles
-void lock_pairs(void)
-{
-    // TODO
+void lock_pairs(void) {
+    int w = 0, l = 0;
+    for (int i = 0; i < pair_count; i++) {
+        locked[pairs[i].winner][pairs[i].loser] = true;
+        w += pairs[i].winner;
+        l += pairs[i].loser;
+        if (w == l) {
+            locked[pairs[i].winner][pairs[i].loser] = false;
+        }
+    }
     return;
 }
 
 // Print the winner of the election
-void print_winner(void)
-{
-    // TODO
+void print_winner(void) {
+    for (int i = 0; i < candidate_count; i++) {
+        int sum = 0;
+        for (int j = 0; j < candidate_count; j++) {
+            if (locked[j][i] == false) {
+                sum++;
+            }
+            if (sum == candidate_count) {
+                printf("%s\n", candidates[i]);
+                return;
+            }
+        }
+    }
     return;
 }
-
