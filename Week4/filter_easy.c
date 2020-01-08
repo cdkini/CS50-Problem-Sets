@@ -4,16 +4,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-bool isEvenRow(unsigned int array[]) {
-    int count = 0;
-    for (int i = 0; array[i] != '\0'; i++) {
-        count++;
-    }
-    if (count % 2 == 0) {
-        return true;
-    }
-    return false;
-}
 
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width]) {
@@ -63,13 +53,28 @@ void sepia(int height, int width, RGBTRIPLE image[height][width]) {
 // Reflect image horizontally
 void reflect(int height, int width, RGBTRIPLE image[height][width]) {
     for (int i = 0; i < height; i++) {
-        for (int j = 0)
+        int a = 0, b = width-1;
+        for (int j = 0; j < width/2; j++) {
+            RGBTRIPLE *aPtr = &image[i][a], *bPtr = &image[i][b];
+            RGBTRIPLE temp = image[i][a];
+            *aPtr = image[i][b];
+            *bPtr = temp;
+            a++;
+            b--;
+        }
     }
     return;
 }
 
 // Blur image
-void blur(int height, int width, RGBTRIPLE image[height][width])
-{
+void blur(int height, int width, RGBTRIPLE image[height][width]) {
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            //Check if corner
+            //Check if edge
+            //Else
+            unsigned int avg = round((float)(image[i-1][j-1] + image[i-1][j] + image[i-1][j+1] + image[i][j-1] + image[i][j] + image[i][j+1] + image[i+1][j-1] + image[i+1][j] + image[i+1][j+1]) / 9));
+        }
+    }
     return;
 }
