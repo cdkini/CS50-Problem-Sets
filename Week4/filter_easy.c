@@ -68,12 +68,37 @@ void reflect(int height, int width, RGBTRIPLE image[height][width]) {
 
 // Blur image
 void blur(int height, int width, RGBTRIPLE image[height][width]) {
+    // Iterate through each pixel
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            //Check if corner
-            //Check if edge
-            //Else
-            unsigned int avg = round((float)(image[i-1][j-1] + image[i-1][j] + image[i-1][j+1] + image[i][j-1] + image[i][j] + image[i][j+1] + image[i+1][j-1] + image[i+1][j] + image[i+1][j+1]) / 9));
+            //Initilaize pixel pointer
+            RGBTRIPLE *ptr = &image[height][width];
+            //Create an array of RGB colors to store RGB sums
+            unsigned int rgbArr[3];
+            //Check if pixel is a corner
+            if ((i == 0 || i == height - 1) && (j == 0 || j == width - 1)) {
+                printf("\n");
+            }
+            //Check if pixel is on an edge
+            else if ((i == 0 || i == height - 1) || (j == 0 || j == width - 1)) {
+                printf("\n");
+            }
+            //Else is a regular pixel
+            else {
+                for (int k = i-1; k < i+2; k++) {
+                    for (int l = j-1; l < j+2; l++) {
+                        rgbArr[0] += image[k][l].rgbtRed;
+                        rgbArr[1] += image[k][l].rgbtGreen;
+                        rgbArr[2] += image[k][l].rgbtBlue;
+
+                    }
+                }
+                ptr->rgbtRed = rgbArr[0] / 9;
+                ptr->rgbtGreen = rgbArr[1] / 9;
+                ptr->rgbtBlue = rgbArr[2] / 9;
+            }
+            //Reset rgbArr for use with next pixel
+            rgbArr[] = { 0, 0, 0 };
         }
     }
     return;
