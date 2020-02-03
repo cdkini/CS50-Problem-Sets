@@ -70,30 +70,32 @@ void reflect(int height, int width, RGBTRIPLE image[height][width]) {
 // Blur image
 void blur(int height, int width, RGBTRIPLE image[height][width]) {
     // Iterate through each pixel
+   RGBTRIPLE blurredArr[height][width];
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            //Initialize pixel pointer
-            RGBTRIPLE *ptr = &image[i][j];
-            //Initialize array to store sum of RGB values
-            unsigned int rgbArr[] = { 0, 0, 0 };
-            //Initialize denominator to avg out rgbArr
-            float denom = 0;
+            unsigned int newRed = 0, newGreen = 0, newBlue = 0;
+            float count = 0;
             for (int a = i - 1; a < i + 2; a++) {
                 for (int b = j - 1; b < j + 2; b++) {
-                    // Check if pixel exists
-                    if (!((a < 0 || b < 0) || (a > height || b > width))) {
-                        rgbArr[0] += image[a][b].rgbtRed;
-                        rgbArr[1] += image[a][b].rgbtGreen;
-                        rgbArr[2] += image[a][b].rgbtBlue;
-                        denom++;
+                    if (a >= 0 && b >= 0 && a < height && b < width) {
+                        newRed += image[a][b].rgbtRed;
+                        newGreen += image[a][b].rgbtGreen;
+                        newBlue += image[a][b].rgbtBlue;
+                        count++;
                     }
                 }
             }
-            //Use values in array with ptr to change pixel
-            ptr->rgbtRed = round(rgbArr[0] / denom);
-            ptr->rgbtGreen = round(rgbArr[1] / denom);
-            ptr->rgbtBlue = round(rgbArr[2] / denom);
+            blurredArr[i][j].rgbtRed = round(newRed/count);
+            blurredArr[i][j].rgbtGreen = round(newGreen/count);
+            blurredArr[i][j].rgbtBlue = round(newBlue/count);
         }
     }
-    return;
+    for (int x = 0; x < height; x++) {
+        for (int y = 0; y < width; y++) {
+            RGBTRIPLE *ptr = &image[x][y];
+            ptr->rgbtRed = blurredArr[x][y].rgbtRed;
+            ptr->rgbtGreen = blurredArr[x][y].rgbtGreen;
+            ptr->rgbtBlue = blurredArr[x][y].rgbtBlue;
+        }
+    }
 }
