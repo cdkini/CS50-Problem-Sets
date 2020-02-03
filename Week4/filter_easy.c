@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 
 // Convert image to grayscale
@@ -71,34 +72,27 @@ void blur(int height, int width, RGBTRIPLE image[height][width]) {
     // Iterate through each pixel
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
-            //Initilaize pixel pointer
-            RGBTRIPLE *ptr = &image[height][width];
-            //Create an array of RGB colors to store RGB sums
-            unsigned int rgbArr[3];
-            //Check if pixel is a corner
-            if ((i == 0 || i == height - 1) && (j == 0 || j == width - 1)) {
-                printf("\n");
-            }
-            //Check if pixel is on an edge
-            else if ((i == 0 || i == height - 1) || (j == 0 || j == width - 1)) {
-                printf("\n");
-            }
-            //Else is a regular pixel
-            else {
-                for (int k = i-1; k < i+2; k++) {
-                    for (int l = j-1; l < j+2; l++) {
-                        rgbArr[0] += image[k][l].rgbtRed;
-                        rgbArr[1] += image[k][l].rgbtGreen;
-                        rgbArr[2] += image[k][l].rgbtBlue;
-
+            //Initialize pixel pointer
+            RGBTRIPLE *ptr = &image[i][j];
+            //Initialize array to store sum of RGB values
+            unsigned int rgbArr[] = { 0, 0, 0 };
+            //Initialize denominator to avg out rgbArr
+            float denom = 0;
+            for (int a = i - 1; a < i + 2; a++) {
+                for (int b = j - 1; b < j + 2; b++) {
+                    // Check if pixel exists
+                    if (!((a < 0 || b < 0) || (a > height || b > width))) {
+                        rgbArr[0] += image[a][b].rgbtRed;
+                        rgbArr[1] += image[a][b].rgbtGreen;
+                        rgbArr[2] += image[a][b].rgbtBlue;
+                        denom++;
                     }
                 }
-                ptr->rgbtRed = rgbArr[0] / 9;
-                ptr->rgbtGreen = rgbArr[1] / 9;
-                ptr->rgbtBlue = rgbArr[2] / 9;
             }
-            //Reset rgbArr for use with next pixel
-            rgbArr[] = { 0, 0, 0 };
+            //Use values in array with ptr to change pixel
+            ptr->rgbtRed = round(rgbArr[0] / denom);
+            ptr->rgbtGreen = round(rgbArr[1] / denom);
+            ptr->rgbtBlue = round(rgbArr[2] / denom);
         }
     }
     return;
