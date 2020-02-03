@@ -66,24 +66,42 @@ void blur(int height, int width, RGBTRIPLE image[height][width]) {
 
 // Detect edges
 void edges(int height, int width, RGBTRIPLE image[height][width]) {
-    RGBTRIPLE edgesArr[height][width];
-    int gxArr[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1}, gyArr[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+    RGBTRIPLE edgesArr[height][width]; // New array to store updated pixels
+    int gxArr[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
+    int gyArr[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+    // Iterate through pixels
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             int index = 0;
-            unsigned int newGx[3], newGy[3];
+            unsigned int redX = 0, greenX = 0, blueX = 0, redY = 0, greenY = 0, blueY = 0; // Store new RGB values
+            // Iterate through 3x3 grid surrounding pixel image[i][j]
             for (int a = i - 1; a < i + 2; a++) {
                 for (int b = j - 1; b < j + 2; b++) {
                     if (a >= 0 && b >= 0 && a < height && b < width) {
-                        gxArr[index]
+                        redX += (gxArr[index] * image[a][b].rgbtRed);
+                        greenX += (gxArr[index] * image[a][b].rgbtGreen);
+                        blueX += (gxArr[index] * image[a][b].rgbtBlue);
+
+                        redY += (gyArr[index] * image[a][b].rgbtRed);
+                        greenY += (gyArr[index] * image[a][b].rgbtGreen);
+                        blueY += (gyArr[index] * image[a][b].rgbtBlue);
                     }
                     index++;
-}
-
-int findGx(RGBTRIPLE array[height][width];) {
-    return;
-}
-
-int findGy() {
-    return;
+                }
+            }
+            // New value is the sqrt of Gx^2 + Gy^2
+            edgesArr[i][j].rgbtRed = fmin(round(sqrt((float)(redX * redX) + (redY * redY))), 255);
+            edgesArr[i][j].rgbtGreen = fmin(round(sqrt((float)(greenX * greenX) + (greenY * greenY))), 255);
+            edgesArr[i][j].rgbtBlue = fmin(round(sqrt((float)(blueX * blueX) + (blueY * blueY))), 255);
+        }
+    }
+    // Iterate through edgesArr and use pointer to move values to original picture
+    for (int x = 0; x < height; x++) {
+        for (int y = 0; y < width; y++) {
+            RGBTRIPLE *ptr = &image[x][y];
+            ptr->rgbtRed = edgesArr[x][y].rgbtRed;
+            ptr->rgbtGreen = edgesArr[x][y].rgbtGreen;
+            ptr->rgbtBlue = edgesArr[x][y].rgbtBlue;
+        }
+    }
 }
