@@ -65,7 +65,25 @@ void blur(int height, int width, RGBTRIPLE image[height][width]) {
 }
 
 // Detect edges
-void edges(int height, int width, RGBTRIPLE image[height][width])
-{
+void edges(int height, int width, RGBTRIPLE image[height][width]) {
+    RGBTRIPLE edgesArr[height][width];
+    int gxArr[] = {-1, 0, 1, -2, 0, 2, -1, 0, 1}, gyArr[] = {-1, -2, -1, 0, 0, 0, 1, 2, 1};
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+            int index = 0;
+            unsigned int newGx[3], newGy[3];
+            for (int a = i - 1; a < i + 2; a++) {
+                for (int b = j - 1; b < j + 2; b++) {
+                    if (a >= 0 && b >= 0 && a < height && b < width) {
+                        gxArr[index]
+                    }
+                    index++;
+}
+
+int findGx(RGBTRIPLE array[height][width];) {
+    return;
+}
+
+int findGy() {
     return;
 }
