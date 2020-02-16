@@ -6,6 +6,7 @@
 typedef uint8_t BYTE;
 
 bool isJPEG(BYTE *buffer);
+FILE* createNewFile(int fileCount);
 
 int main(int argc, char *argv[]) {
 
@@ -20,29 +21,22 @@ int main(int argc, char *argv[]) {
     }
 
     BYTE *buffer = malloc(512);
+    FILE *img = NULL;
     int fileCount = 0;
     bool firstFileFound = false;
-    FILE *img = NULL;
 
     while (fread(buffer, sizeof(buffer), 1, f) == 1) {
-
         if (firstFileFound) {
             if (isJPEG(buffer)) {
                 fclose(img);
                 fileCount++;
-                char fileName[8];
-                sprintf(fileName, "%03i.jpg", fileCount);
-                img = fopen(fileName, "w");
-                fwrite(buffer, sizeof(buffer), 1, img);
-            } else {
-                fwrite(buffer, sizeof(buffer), 1, img);
+                img = createNewFile(fileCount);
             }
+            fwrite(buffer, sizeof(buffer), 1, img);
         } else {
             if (isJPEG(buffer)) {
                 firstFileFound = true;
-                char fileName[8];
-                sprintf(fileName, "%03i.jpg", fileCount);
-                img = fopen(fileName, "w");
+                img = createNewFile(fileCount);
                 fwrite(buffer, sizeof(buffer), 1, img);
             }
         }
@@ -57,4 +51,10 @@ bool isJPEG(BYTE *buffer) {
         return true;
     }
     return false;
+}
+
+FILE* createNewFile(int fileCount) {
+    char fileName[8];
+    sprintf(fileName, "%03i.jpg", fileCount);
+    return fopen(fileName, "w");
 }
