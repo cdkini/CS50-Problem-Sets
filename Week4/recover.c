@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
-bool isJPEG(int buffer[512]);
+typedef uint8_t BYTE;
+
+bool isJPEG(BYTE *buffer);
 
 int main(int argc, char *argv[]) {
 
@@ -16,34 +19,40 @@ int main(int argc, char *argv[]) {
         return 2;
     }
 
-    int *buffer = malloc(512);
+    BYTE *buffer = malloc(512);
+    int fileCount = 0;
+    bool firstFileFound = false;
+    FILE *img = NULL;
+
     while (fread(buffer, sizeof(buffer), 1, f) == 1) {
-        isJPEG(buffer);
 
+        if (firstFileFound) {
+            if (isJPEG(buffer)) {
+                fclose(img);
+                fileCount++;
+                char fileName[8];
+                sprintf(fileName, "%03i.jpg", fileCount);
+                img = fopen(fileName, "w");
+                fwrite(buffer, sizeof(buffer), 1, img);
+            } else {
+                fwrite(buffer, sizeof(buffer), 1, img);
+            }
+        } else {
+            if (isJPEG(buffer)) {
+                firstFileFound = true;
+                char fileName[8];
+                sprintf(fileName, "%03i.jpg", fileCount);
+                img = fopen(fileName, "w");
+                fwrite(buffer, sizeof(buffer), 1, img);
+            }
+        }
     }
-
-
     free(buffer);
     fclose(f);
     return 0;
 }
 
-/*
-
-    1 - Open file
-    2 - Iterate through file (512 byte blocks)
-    3 - Store this block into a temporary "buffer" array
-    4 - Check the first 4 bytes of buffer to determine if JPEG
-        a - If not JPEG, continue iteration until JPEG
-        b - Once JPEG found, continue
-    5 - Create JPEG and write to it
-    6 - Continue to add 512 byte blocks to JPEG, checking for isJPEG
-    7 - Once new JPEG found, close current file, create new one, and write to it
-
-*/
-
-
-bool isJPEG(int buffer[512]) {
+bool isJPEG(BYTE *buffer) {
     if (buffer[0] == 0xff && buffer[1] == 0xd8 && buffer[2] == 0xff && (buffer[3] & 0xf0) == 0xe0) {
         return true;
     }
