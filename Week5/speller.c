@@ -16,7 +16,7 @@ typedef struct node
 node;
 
 // Number of buckets in hash table
-const unsigned int N = 1;
+const unsigned int N = 26;
 
 // Hash table
 node *table[N];
@@ -43,14 +43,19 @@ bool load(const char *dictionary)
     if (f == NULL) {
         return false;
     }
-    char *word = malloc(10);
-    while (fscanf(f, "%s", word) != EOF) {
-        node *newNode = malloc(sizeof(node));
-        if (newNode == NULL) {
+    char *word = malloc(10); // Allocate memory for word
+    while (fscanf(f, "%s", word) != EOF) { // Iterate through file of words
+        node *n = malloc(sizeof(node)); // Create new node for linked list
+        if (n == NULL) {
             return false;
         }
-        strcpy(newNode->word, word);
-        int index = hash(newNode->word);
+        strcpy(n->word, word); // Set the new node's word attribute to the word we've read from the file
+        n->next = NULL;
+        int index = hash(n->word); // Utilize the hash function to determine the proper hash table index to insert the word into
+        // Set n.next to first element of linked list (using index above)
+        n->next = table[index][0];
+        table[index].next = n;
+        // Point head to n
     }
 
 
