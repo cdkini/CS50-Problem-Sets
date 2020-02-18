@@ -22,8 +22,7 @@ const unsigned int N = 26;
 node *table[N];
 
 // Returns true if word is in dictionary else false
-bool check(const char *word)
-{
+bool check(const char *word) {
     // TODO
     return false;
 }
@@ -42,7 +41,7 @@ bool load(const char *dictionary) {
         return false;
     }
 
-    char *word = malloc(10); // Allocate memory for word
+    char *word = malloc(15); // Allocate memory for word
 
     while (fscanf(f, "%s", word) != EOF) { // Iterate through file of words until EOF
 
@@ -51,8 +50,8 @@ bool load(const char *dictionary) {
             return false;
         }
 
+        int index = hash(word); // Utilize the hash function to determine the proper hash table index to insert the word into
         strcpy(n->word, word); // Set the new node's word attribute to the word we've read from the file
-        int index = hash(n->word); // Utilize the hash function to determine the proper hash table index to insert the word into
         n->next = table[index]; // Set n.next to first element of linked list (using index above)
         table[index]->next = n; // Point head to n
     }
@@ -64,20 +63,26 @@ bool load(const char *dictionary) {
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
 unsigned int size(void) {
     unsigned int count = 0;
-    for (int i = 0; i < 26; i++) {
+    for (int i = 0; i < N; i++) {
         bool flag = true;
         node *trav = NULL;
-        while (true) {
-            table[i];
-            trav = trav->next;
+        while (flag) {
+            if (table[i] == 0) {
+                flag = false;
+            } else {
+                trav = table[i];
+                while (trav != NULL) {
+                    count++;
+                    trav = trav->next;
+                }
+            }
         }
     }
-    return 0;
+    return count;
 }
 
 // Unloads dictionary from memory, returning true if successful else false
-bool unload(void)
-{
+bool unload(void) {
     // TODO
     return false;
 }
