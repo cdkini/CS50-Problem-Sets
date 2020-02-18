@@ -29,43 +29,49 @@ bool check(const char *word)
 }
 
 // Hashes word to a number
-unsigned int hash(const char *word)
-{
-    // TODO
-    return 0;
+unsigned int hash(const char *word) {
+    int hashVal = word[0] - 97; // Open to add a better hash function later
+    return hashVal;
 }
 
 // Loads dictionary into memory, returning true if successful else false
-bool load(const char *dictionary)
-{
-    // TODO
+bool load(const char *dictionary) {
+
     FILE *f = fopen(dictionary, "r");
     if (f == NULL) {
         return false;
     }
+
     char *word = malloc(10); // Allocate memory for word
-    while (fscanf(f, "%s", word) != EOF) { // Iterate through file of words
+
+    while (fscanf(f, "%s", word) != EOF) { // Iterate through file of words until EOF
+
         node *n = malloc(sizeof(node)); // Create new node for linked list
         if (n == NULL) {
             return false;
         }
+
         strcpy(n->word, word); // Set the new node's word attribute to the word we've read from the file
-        n->next = NULL;
         int index = hash(n->word); // Utilize the hash function to determine the proper hash table index to insert the word into
-        // Set n.next to first element of linked list (using index above)
-        n->next = table[index][0];
-        table[index].next = n;
-        // Point head to n
+        n->next = table[index]; // Set n.next to first element of linked list (using index above)
+        table[index]->next = n; // Point head to n
     }
 
-
+    free(word);
     return false;
 }
 
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
-unsigned int size(void)
-{
-    // TODO
+unsigned int size(void) {
+    unsigned int count = 0;
+    for (int i = 0; i < 26; i++) {
+        bool flag = true;
+        node *trav = NULL;
+        while (true) {
+            table[i];
+            trav = trav->next;
+        }
+    }
     return 0;
 }
 
