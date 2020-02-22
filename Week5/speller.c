@@ -1,5 +1,4 @@
-// Implements a dictionary's functionality
-
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -23,7 +22,25 @@ node *table[N];
 
 // Returns true if word is in dictionary else false
 bool check(const char *word) {
-    // TODO
+
+    char *newWord = malloc(strlen(word));
+    for (int i = 0; word[i]; i++) {
+        newWord[i] = tolower(word[i]);
+    }
+
+    unsigned int hashVal = hash(newWord);
+    if (table[hashVal] == 0) {
+        free(newWord);
+        return false;
+    }
+    node *trav = table[hashVal];
+    while (trav->next != NULL) {
+        if (strcmp(trav->word, newWord) == 0) {
+            free(newWord);
+            return true;
+        }
+        trav = trav->next;
+    }
     return false;
 }
 
@@ -42,7 +59,7 @@ bool load(const char *dictionary) {
         return false;
     }
 
-    char *word = malloc(15); // Allocate memory for word
+    char *word = malloc(46); // Allocate memory for word
     while (fscanf(f, "%s", word) != EOF) { // Iterate through file of words until EOF
         node *n = malloc(sizeof(node)); // Create new node for linked list
         n->next = NULL;
@@ -68,16 +85,25 @@ bool load(const char *dictionary) {
 
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
 unsigned int size(void) {
-    if (!(load)) {
-        return 0;
-    }
+    unsigned int count = 0;
+
     for (int i = 0; i < N; i++) {
-        
+        if (table[i] == 0) {
+            continue;
+        }
+        node *trav = table[i];
+        while (trav->next != NULL) {
+            trav = trav->next;
+            count++;
+        }
     }
+    return count;
 }
 
 // Unloads dictionary from memory, returning true if successful else false
 bool unload(void) {
-    // TODO
+    for (int i = 0; i < N; i++) {
+        // Traverse linked lists within hash table to free any malloced pointers
+    }
     return false;
 }
