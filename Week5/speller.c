@@ -29,11 +29,14 @@ bool check(const char *word) {
     }
 
     unsigned int hashVal = hash(newWord);
-    if (table[hashVal] == 0) {
+
+    if (table[hashVal] == NULL) {
         free(newWord);
         return false;
     }
-    node *trav = table[hashVal];
+
+    node **head = &table[hashVal];
+    node *trav = *head;
     while (trav->next != NULL) {
         if (strcmp(trav->word, newWord) == 0) {
             free(newWord);
@@ -62,21 +65,20 @@ bool load(const char *dictionary) {
     char *word = malloc(46); // Allocate memory for word
     while (fscanf(f, "%s", word) != EOF) { // Iterate through file of words until EOF
         node *n = malloc(sizeof(node)); // Create new node for linked list
-        n->next = NULL;
         if (n == NULL) {
             return false;
         }
 
         strcpy(n->word, word); // Set the new node's word attribute to the word we've read from the file
         unsigned int index = hash(word); // Utilize the hash function to determine the proper hash table index to insert the word into
-
-        if (table[index] == 0) {
+        if (table[index] == NULL) {
             table[index] = n;
-        } else {
-            node **head = &table[index];
-            n->next = *head;
-            *head = n;
+            free(word);
+            return true;
         }
+        node **head = &table[index];
+        n->next = *head;
+        head = &n;
     }
 
     free(word);
@@ -88,10 +90,8 @@ unsigned int size(void) {
     unsigned int count = 0;
 
     for (int i = 0; i < N; i++) {
-        if (table[i] == 0) {
-            continue;
-        }
-        node *trav = table[i];
+        node **head = &table[i];
+        node *trav = *head;
         while (trav->next != NULL) {
             trav = trav->next;
             count++;
@@ -104,6 +104,12 @@ unsigned int size(void) {
 bool unload(void) {
     for (int i = 0; i < N; i++) {
         // Traverse linked lists within hash table to free any malloced pointers
+        node **head = &table[i];
+        node *trav = *head;
+        while (trav->next != NULL) {
+
+            trav = trav->next;
+        }
     }
     return false;
 }
