@@ -26,14 +26,8 @@ node *table[N];
 
 // Returns true if word is in dictionary else false
 bool check(const char *word) {
-    char firstChar;
-    if (word[0] >= 97) {
-        firstChar = word[0];
-    } else {
-        firstChar = word[0] + 32;
-    }
 
-    unsigned int index = hash(&firstChar);
+    unsigned int index = hash(word);
 
     node *head = table[index];
     node *trav = head;
@@ -49,6 +43,9 @@ bool check(const char *word) {
 // Hashes word to a number
 unsigned int hash(const char *word) {
     unsigned int hashVal = word[0] - 97; // Open to add a better hash function later
+    if (hashVal > N) {
+        hashVal = N - 1;
+    }
     return hashVal;
 }
 
@@ -81,7 +78,7 @@ bool load(const char *dictionary) {
 }
 
 // Returns number of words in dictionary if loaded else 0 if not yet loaded
-unsigned int size(void) {
+unsigned int size(void) { // Checked against CS50, this func is correct!
     return wordCount;
 }
 
