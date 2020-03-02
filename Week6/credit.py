@@ -1,4 +1,4 @@
-def is_valid_card(card_num) -> boolean:
+def is_valid_card(card_num):
   if int(len(card_num)) not in [13, 15, 16]:
     return False
   temp = 0
