@@ -50,4 +50,30 @@ if __name__ == "__main__":
 
 
 # roster.py
-# TODO
+import sqlite3
+import sys
+
+
+def main():
+
+    if len(sys.argv) != 2 or sys.argv[1] not in ["Slytherin", "Ravenclaw", "Hufflepuff", "Gryffindor"]:
+        print("Please input one of the four Hogwarts houses as an argument!")
+        sys.exit(0)
+
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+
+    c.execute("SELECT * FROM students WHERE house=? ORDER BY last ASC", (sys.argv[1], ))
+    conn.commit()
+
+    for query in c.fetchall():
+        if not query[1]:
+            print(f"{query[0]} {query[2]}, born {query[4]}")
+        else:
+            print(f"{query[0]} {query[1]} {query[2]}, born {query[4]}")
+
+    conn.close()
+
+
+if __name__ == "__main__":
+    main()
