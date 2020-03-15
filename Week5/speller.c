@@ -16,7 +16,7 @@ typedef struct node
 node;
 
 // Number of buckets in hash table
-const unsigned int N = 26;
+const unsigned int N = 40001;
 
 // Number of total words
 unsigned int wordCount;
@@ -25,28 +25,36 @@ unsigned int wordCount;
 node *table[N];
 
 // Returns true if word is in dictionary else false
-bool check(const char *word) {
+bool check(const char *word) { // Currently quite broken
 
     unsigned int index = hash(word);
 
-    node *head = table[index];
-    node *trav = head;
+    if (table[index] == NULL) {
+        return false;
+    }
+
+    node *trav = table[index];
     while (trav != NULL) {
         if (strcasecmp(trav->word, word) == 0) {
             return true;
         }
+
         trav = trav->next;
     }
     return false;
 }
 
 // Hashes word to a number
-unsigned int hash(const char *word) {
-    unsigned int hashVal = word[0] - 97; // Open to add a better hash function later
-    if (hashVal > N) {
-        hashVal = N - 1;
+unsigned int hash(const char *word) { // Checked against REPL and works fine
+    unsigned int hash = 5381;
+    int c;
+
+    // Iterate through the characters of string
+    while ((c = *word++)) {
+        // Calculate (hash * 33) + c
+        hash = ((hash << 5) + hash) + tolower(c);
     }
-    return hashVal;
+    return hash % N;
 }
 
 // Loads dictionary into memory, returning true if successful else false
@@ -54,25 +62,25 @@ bool load(const char *dictionary) {
 
     FILE *f = fopen(dictionary, "r");
     if (f == NULL) {
+        unload();
         return false;
     }
 
-    char *word = malloc(46); // Allocate memory for word
+    char word[LENGTH + 1] = {0};
     while (fscanf(f, "%s", word) != EOF) { // Iterate through file of words until EOF
         node *n = malloc(sizeof(node)); // Create new node for linked list
         if (n == NULL) {
+            unload();
             return false;
         }
 
         strcpy(n->word, word); // Set the new node's word attribute to the word we've read from the file
         unsigned int index = hash(word); // Utilize the hash function to determine the proper hash table index to insert the word into
-        node *head = table[index];
-        n->next = head;
-        head = n;
+        n->next = table[index];
+        table[index] = n;
         wordCount++;
-        free(n);
     }
-    free(word);
+
     fclose(f);
     return true;
 }
@@ -85,8 +93,7 @@ unsigned int size(void) { // Checked against CS50, this func is correct!
 // Unloads dictionary from memory, returning true if successful else false
 bool unload(void) {
     for (int i = 0; i < N; i++) {
-        node *head = table[i];
-        node *trav = head;
+        node *trav = table[i];
 
         while (trav != NULL) {
             node *tmp = trav;
